@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — QuizzyVerse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #F5F0E8;
+      --ink: #1A1714;
+      --warm-mid: #8C7B6B;
+      --accent: #C4542A;
+      --border: #D9CFC3;
+      --error: #c0392b;
+      --success: #27ae60;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+    }
+    .form-wrap {
+      width: 560px;
+      padding: 4rem 3.5rem;
+      animation: fadeUp 0.9s ease 0.1s both;
+    }
+    .form-eyebrow {
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--warm-mid);
+      margin-bottom: 1rem;
+    }
+    .form-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.75rem;
+      color: var(--ink);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 3rem;
+    }
+    .field {
+      margin-bottom: 1.4rem;
+      position: relative;
+    }
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--warm-mid);
+      margin-bottom: 0.6rem;
+    }
+    input[type="email"], input[type="password"], input[type="text"] {
+      width: 100%;
+      padding: 1.05rem 1.2rem;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      border-radius: 2px;
+    }
+    input::placeholder { color: #C8BFB5; }
+    input:focus {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 3px rgba(26,23,20,0.06);
+    }
+    input.input-error { border-color: var(--error); }
+    .pwd-wrap { position: relative; }
+    .eye-btn {
+      position: absolute;
+      right: 1.1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--warm-mid);
+      display: flex;
+      align-items: center;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .eye-btn:hover { color: var(--ink); }
+    .hint {
+      font-size: 0.72rem;
+      color: var(--warm-mid);
+      margin-top: 0.35rem;
+      letter-spacing: 0.02em;
+    }
+    .btn-signup {
+      width: 100%;
+      padding: 1.15rem;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    .btn-signup::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s ease;
+      z-index: 0;
+    }
+    .btn-signup:hover::after { transform: scaleX(1); }
+    .btn-signup span { position: relative; z-index: 1; }
+    .alert {
+      padding: 0.85rem 1rem;
+      border-radius: 2px;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      display: none;
+      letter-spacing: 0.02em;
+    }
+    .alert-error { background: #fdf0ef; border: 1px solid #f5c6c2; color: var(--error); display: block; }
+    .alert-success { background: #edfaf3; border: 1px solid #b7efd1; color: var(--success); display: block; }
+    .login-line {
+      margin-top: 2.25rem;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--warm-mid);
+    }
+    .login-line a {
+      color: var(--ink);
+      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .login-line a:hover { color: var(--accent); border-color: var(--accent); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 620px) {
+      .form-wrap { width: 100%; padding: 2.5rem 1.5rem; }
+      .form-title { font-size: 2.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-wrap">
+    <p class="form-eyebrow">Join QuizzyVerse</p>
+    <h1 class="form-title">Create account</h1>
+
+    <div id="alert" class="alert"></div>
+
+    <div class="field">
+      <label for="name">Full name</label>
+      <input type="text" id="name" placeholder="John Doe" autocomplete="name" />
+    </div>
+
+    <div class="field">
+      <label for="email">Email address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="pwd-wrap">
+        <input type="password" id="password" placeholder="••••••••" autocomplete="new-password" />
+        <button class="eye-btn" onclick="togglePwd('password', this)" aria-label="Toggle password">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <p class="hint">Minimum 6 characters</p>
+    </div>
+
+    <div class="field">
+      <label for="confirm">Confirm password</label>
+      <div class="pwd-wrap">
+        <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" />
+        <button class="eye-btn" onclick="togglePwd('confirm', this)" aria-label="Toggle confirm password">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-signup" onclick="handleSignup()"><span>Create Account</span></button>
+
+    <p class="login-line">Already have an account? <a href="login.html">Sign in</a></p>
+  </div>
+
+  <script>
+    function togglePwd(id, btn) {
+      const input = document.getElementById(id);
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.querySelector('svg').innerHTML = isHidden
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>';
+    }
+
+    function showAlert(msg, type) {
+      const el = document.getElementById('alert');
+      el.textContent = msg;
+      el.className = 'alert alert-' + type;
+    }
+
+    function clearErrors() {
+      ['name','email','password','confirm'].forEach(id => {
+        document.getElementById(id).classList.remove('input-error');
+      });
+    }
+
+    function handleSignup() {
+      clearErrors();
+      const name     = document.getElementById('name').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm  = document.getElementById('confirm').value;
+
+      if (!name) {
+        showAlert('Please enter your full name.', 'error');
+        document.getElementById('name').classList.add('input-error');
+        return;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showAlert('Please enter a valid email address.', 'error');
+        document.getElementById('email').classList.add('input-error');
+        return;
+      }
+      if (password.length < 6) {
+        showAlert('Password must be at least 6 characters.', 'error');
+        document.getElementById('password').classList.add('input-error');
+        return;
+      }
+      if (password !== confirm) {
+        showAlert('Passwords do not match.', 'error');
+        document.getElementById('confirm').classList.add('input-error');
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('qv_users') || '[]');
+      if (users.find(u => u.email === email)) {
+        showAlert('An account with this email already exists.', 'error');
+        document.getElementById('email').classList.add('input-error');
+        return;
+      }
+
+      users.push({ name, email, password });
+      localStorage.setItem('qv_users', JSON.stringify(users));
+
+      showAlert('Account created! Redirecting to login...', 'success');
+      setTimeout(() => window.location.href = 'login.html', 1000);
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleSignup();
+    });
+  </script>
+</body>
+</html>

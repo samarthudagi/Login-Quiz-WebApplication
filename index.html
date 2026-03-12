@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Application</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .user-greeting {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .logout-btn {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.03em;
+        }
+        .logout-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-top">
+            <h1>QuizzyVerse</h1>
+            <div class="user-info">
+                <span class="user-greeting" id="user-greeting"></span>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="starter fade-in">
+        <div class="form-row">
+            <div class="form-col">
+                <div class="type">
+                    <p class="section-title">Select Topic</p>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" value="Linux" name="a" id="linux" />
+                            <label for="linux">Linux</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="DevOps" name="a" id="devops" />
+                            <label for="devops">DevOps</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="Code" name="a" id="code" />
+                            <label for="code">Programming</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="Docker" name="a" id="docker" />
+                            <label for="docker">Docker</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="React" name="a" id="react" />
+                            <label for="react">React</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="Next.js" name="a" id="nextjs" />
+                            <label for="nextjs">Next.js</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="Django" name="a" id="django" />
+                            <label for="django">Django</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-col">
+                <div class="number">
+                    <p class="section-title">Number of Questions</p>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" value="5" name="numbers" id="five" />
+                            <label for="five">5</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="10" name="numbers" id="ten" />
+                            <label for="ten">10</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="15" name="numbers" id="fifteen" />
+                            <label for="fifteen">15</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="20" name="numbers" id="twenty" />
+                            <label for="twenty">20</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-col">
+                <div class="difficulty">
+                    <p class="section-title">Difficulty Level</p>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" value="Easy" name="c" id="easy" />
+                            <label for="easy">Easy</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="Medium" name="c" id="medium" />
+                            <label for="medium">Medium</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="Hard" name="c" id="hard" />
+                            <label for="hard">Hard</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-col">
+                <div class="time-limit">
+                    <p class="section-title">Time Limit Per Question</p>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" value="0" name="time" id="no-limit" checked />
+                            <label for="no-limit">No Limit</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="15" name="time" id="fifteen-sec" />
+                            <label for="fifteen-sec">15 Sec</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="30" name="time" id="thirty-sec" />
+                            <label for="thirty-sec">30 Sec</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="60" name="time" id="one-min" />
+                            <label for="one-min">1 Min</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" value="120" name="time" id="two-min" />
+                            <label for="two-min">2 Min</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-row">
+            <button class="startingButton" disabled>Start Quiz</button>
+            <div class="highest-score-container">
+                <p class="highest-score-title">Your Highest Score</p>
+                <div class="highest-score-value" id="high-score-display">0</div>
+                <button class="clear-highest-score" id="clear-high-score-btn">Reset Highest Score</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+        <h1>Quiz Challenge</h1>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <div class="timer-container">
+            <div class="timer" id="timer">Time: 30s</div>
+        </div>
+
+        <p class="ques">Loading your questions...</p>
+        <div class="options"></div>
+
+        <div class="buttons-container">
+            <button class="next">Next Question</button>
+            <button class="play">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Auth guard — redirect to login if not logged in
+        if (sessionStorage.getItem('qv_loggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+
+        // Show user greeting
+        const userData = JSON.parse(sessionStorage.getItem('qv_user') || '{}');
+        const greeting = document.getElementById('user-greeting');
+        if (userData.name) {
+            greeting.textContent = 'Hi, ' + userData.name.split(' ')[0] + '!';
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('qv_loggedIn');
+            sessionStorage.removeItem('qv_user');
+            window.location.href = 'login.html';
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
