@@ -242,7 +242,12 @@ startButton.addEventListener('click', async function () {
     diff = getSelectedValue('c');
     timeLimit = getSelectedValue('time');
 
-    curl = `https://quizapi.io/api/v1/questions?api_key=${apitoken}&category=${encodeURIComponent(type)}&difficulty=${encodeURIComponent(diff.toLowerCase())}&limit=${number}`;
+    let apiTag = type.toLowerCase();
+    if (apiTag === 'code') apiTag = 'programming';
+    if (apiTag === 'next.js') apiTag = 'nextjs';
+
+    // We fetch a larger pool and omit difficulty from the URL to avoid 0-result errors on small tags
+    curl = `https://quizapi.io/api/v1/questions?api_key=${apitoken}&tags=${encodeURIComponent(apiTag)}&limit=50`;
 
     startButton.disabled = true;
     startButton.textContent = "Loading...";
@@ -261,11 +266,23 @@ startButton.addEventListener('click', async function () {
         if (apiData.length === 0) {
             startButton.disabled = false;
             startButton.textContent = "Start Quiz";
-            alert("No questions found for this selection. Try another topic/difficulty.");
+            alert(`No questions found for ${type} in the API. Try another topic!`);
             return;
         }
 
-        data = apiData;
+        // Try to filter by intended difficulty locally
+        let filteredData = apiData.filter(q => q.difficulty && q.difficulty.toLowerCase() === diff.toLowerCase());
+        
+        // Fallback: If QuizAPI lacks questions of that specific difficulty, use whatever is available
+        if (filteredData.length === 0) {
+            filteredData = apiData;
+        }
+
+        // Randomly shuffle the questions to ensure varied quizzes
+        filteredData.sort(() => 0.5 - Math.random());
+
+        // Slice to the requested number of questions
+        data = filteredData.slice(0, parseInt(number));
 
         startingPage.style.display = 'none';
         quizPage.style.display = 'block';
