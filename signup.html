@@ -379,8 +379,9 @@
     });
 
     function triggerGoogleSignup() {
-      // Reverted to explicit root path because of Google Cloud Console whitelist restrictions
-      const redirectUri = encodeURIComponent(window.location.origin + '/google-callback.html');
+      let currentPath = window.location.pathname;
+      const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+      const redirectUri = encodeURIComponent(window.location.origin + basePath + 'google-callback.html');
       const scope = encodeURIComponent('openid email profile');
       const url = `https://accounts.google.com/o/oauth2/v2/auth`
         + `?client_id=${GOOGLE_CLIENT_ID}`
