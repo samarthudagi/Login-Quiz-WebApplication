@@ -1,5 +1,5 @@
 'use strict';
-let apitoken = 'qa_sk_66ffe3024b359ee97192c6202573034e95ad2d88';
+let apitoken = 'qa_sk_e8b703f7de51df1c1d7cb69f739da0b4afa12725';
 
 const question = document.querySelector('.ques');
 const nextbtn = document.querySelector('.next');
@@ -131,8 +131,7 @@ function timeUp() {
     allButtons.forEach(btn => btn.disabled = true);
 
     allButtons.forEach(btn => {
-        const answerKey = Object.keys(currentQuestion.answers).find(k => btn.textContent === currentQuestion.answers[k]);
-        if (answerKey && currentQuestion.correct_answers[answerKey + '_correct'] === 'true') {
+        if (btn.dataset.correct === 'true') {
             btn.classList.add('correct');
         }
     });
@@ -148,7 +147,8 @@ function displayingData() {
 
     currentQuestion = data[currentQuestionNumber];
 
-    question.innerHTML = `${currentQuestionNumber + 1}. ${currentQuestion.question}`;
+    const questionText = currentQuestion.question || currentQuestion.text;
+    question.innerHTML = `${currentQuestionNumber + 1}. ${questionText}`;
     currentQuestionNumber++;
 
     updateProgress();
@@ -159,47 +159,47 @@ function displayingData() {
 
     startTimer();
 
-    for (const [key, value] of Object.entries(currentQuestion.answers)) {
-        if (value) {
-            const button = document.createElement('button');
-            button.classList.add('btn');
-            button.textContent = value;
-
-            button.addEventListener('click', function () {
-                stopTimer();
-
-                const allButtons = document.querySelectorAll('.btn');
-                allButtons.forEach(btn => btn.disabled = true);
-
-                const selectedAnswerKey = Object.keys(currentQuestion.answers).find(k => currentQuestion.answers[k] === button.textContent);
-
-                let correctKey = null;
-                for (const k of Object.keys(currentQuestion.correct_answers)) {
-                    if (currentQuestion.correct_answers[k] === 'true') {
-                        correctKey = k.replace('_correct', '');
-                        break;
-                    }
-                }
-
-                if (selectedAnswerKey && correctKey && selectedAnswerKey === correctKey) {
-                    button.classList.add('correct');
-                    correctAnswers++;
-                } else {
-                    button.classList.add('incorrect');
-                    allButtons.forEach(btn => {
-                        const k = Object.keys(currentQuestion.answers).find(ansKey => currentQuestion.answers[ansKey] === btn.textContent);
-                        if (k && currentQuestion.correct_answers[k + '_correct'] === 'true') {
-                            btn.classList.add('correct');
-                        }
-                    });
-                }
-
-                nextbtn.style.display = 'block';
-            });
-
-            optionsContainer.appendChild(button);
+    let normalizedAnswers = [];
+    if (Array.isArray(currentQuestion.answers)) {
+        normalizedAnswers = currentQuestion.answers.map(a => ({ text: a.text, isCorrect: a.isCorrect === true || a.isCorrect === 'true' }));
+    } else {
+        for (const [key, value] of Object.entries(currentQuestion.answers)) {
+            if (value) {
+                const isCorrect = currentQuestion.correct_answers[key + '_correct'] === 'true';
+                normalizedAnswers.push({ text: value, isCorrect: isCorrect });
+            }
         }
     }
+
+    normalizedAnswers.forEach(ans => {
+        const button = document.createElement('button');
+        button.classList.add('btn');
+        button.textContent = ans.text;
+        button.dataset.correct = ans.isCorrect;
+
+        button.addEventListener('click', function () {
+            stopTimer();
+
+            const allButtons = document.querySelectorAll('.btn');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (ans.isCorrect) {
+                button.classList.add('correct');
+                correctAnswers++;
+            } else {
+                button.classList.add('incorrect');
+                allButtons.forEach(btn => {
+                    if (btn.dataset.correct === 'true') {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            nextbtn.style.display = 'block';
+        });
+
+        optionsContainer.appendChild(button);
+    });
 }
 
 nextbtn.addEventListener('click', function () {
@@ -242,7 +242,7 @@ startButton.addEventListener('click', async function () {
     diff = getSelectedValue('c');
     timeLimit = getSelectedValue('time');
 
-    curl = `https://quizapi.io/api/v1/questions?apiKey=${apitoken}&category=${encodeURIComponent(type)}&difficulty=${encodeURIComponent(diff.toLowerCase())}&limit=${number}`;
+    curl = `https://quizapi.io/api/v1/questions?api_key=${apitoken}&category=${encodeURIComponent(type)}&difficulty=${encodeURIComponent(diff.toLowerCase())}&limit=${number}`;
 
     startButton.disabled = true;
     startButton.textContent = "Loading...";
@@ -251,14 +251,21 @@ startButton.addEventListener('click', async function () {
         const res = await fetch(curl);
         const json = await res.json();
 
-        if (!Array.isArray(json) || json.length === 0) {
+        let apiData = [];
+        if (Array.isArray(json)) {
+            apiData = json;
+        } else if (json && json.data && Array.isArray(json.data)) {
+            apiData = json.data;
+        }
+
+        if (apiData.length === 0) {
             startButton.disabled = false;
             startButton.textContent = "Start Quiz";
             alert("No questions found for this selection. Try another topic/difficulty.");
             return;
         }
 
-        data = json;
+        data = apiData;
 
         startingPage.style.display = 'none';
         quizPage.style.display = 'block';

@@ -202,20 +202,35 @@
 
     <script>
         // Auth guard — redirect to login if not logged in
-        if (sessionStorage.getItem('qv_loggedIn') !== 'true') {
+        if (localStorage.getItem('qv_loggedIn') !== 'true') {
             window.location.href = 'login.html';
         }
 
+        // React to logouts/changes from other tabs
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'qv_loggedIn' && e.newValue !== 'true') {
+                window.location.href = 'login.html';
+            }
+            if (e.key === 'qv_user' && e.newValue) {
+                try {
+                    const newUserData = JSON.parse(e.newValue);
+                    if (newUserData.name) {
+                        document.getElementById('user-greeting').textContent = 'Hi, ' + newUserData.name.split(' ')[0] + '!';
+                    }
+                } catch(err) {}
+            }
+        });
+
         // Show user greeting
-        const userData = JSON.parse(sessionStorage.getItem('qv_user') || '{}');
+        const userData = JSON.parse(localStorage.getItem('qv_user') || '{}');
         const greeting = document.getElementById('user-greeting');
         if (userData.name) {
             greeting.textContent = 'Hi, ' + userData.name.split(' ')[0] + '!';
         }
 
         function handleLogout() {
-            sessionStorage.removeItem('qv_loggedIn');
-            sessionStorage.removeItem('qv_user');
+            localStorage.removeItem('qv_loggedIn');
+            localStorage.removeItem('qv_user');
             window.location.href = 'login.html';
         }
     </script>

@@ -8,7 +8,6 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet" />
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     *,
     *::before,
@@ -290,8 +289,7 @@
 
     <div id="alert" class="alert"></div>
 
-    <!-- Google Sign-Up Button -->
-    <button class="btn-google" onclick="triggerGoogleSignup()">
+    <button type="button" class="btn-google" onclick="triggerGoogleSignup()">
       <svg width="20" height="20" viewBox="0 0 24 24">
         <path fill="#4285F4"
           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -307,6 +305,7 @@
 
     <div class="divider"><span>or sign up with email</span></div>
 
+    <form id="signup-form">
     <div class="field">
       <label for="name">Full name</label>
       <input type="text" id="name" placeholder="John Doe" autocomplete="name" />
@@ -319,7 +318,7 @@
       <label for="password">Password</label>
       <div class="pwd-wrap">
         <input type="password" id="password" placeholder="••••••••" autocomplete="new-password" />
-        <button class="eye-btn" onclick="togglePwd('password', this)" aria-label="Toggle password">
+        <button type="button" class="eye-btn" onclick="togglePwd('password', this)" aria-label="Toggle password">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
             <circle cx="12" cy="12" r="3" />
@@ -332,7 +331,7 @@
       <label for="confirm">Confirm password</label>
       <div class="pwd-wrap">
         <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" />
-        <button class="eye-btn" onclick="togglePwd('confirm', this)" aria-label="Toggle confirm">
+        <button type="button" class="eye-btn" onclick="togglePwd('confirm', this)" aria-label="Toggle confirm">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
             <circle cx="12" cy="12" r="3" />
@@ -341,43 +340,59 @@
       </div>
     </div>
 
-    <button class="btn-signup" onclick="handleSignup()"><span>Create Account</span></button>
+    <button type="submit" class="btn-signup"><span>Create Account</span></button>
+    </form>
     <p class="login-line">Already have an account? <a href="login.html">Sign in</a></p>
   </div>
 
-  <div id="g_id_onload" data-client_id="378489832271-7i2ho8hbuo3heeri859cbc0tpkgu1gt3.apps.googleusercontent.com"
-    data-callback="handleGoogleCredential" data-auto_prompt="false">
-  </div>
+
 
   <script>
-    function triggerGoogleSignup() {
-      google.accounts.id.initialize({
-        client_id: '378489832271-7i2ho8hbuo3heeri859cbc0tpkgu1gt3.apps.googleusercontent.com',
-        callback: handleGoogleCredential
-      });
-      google.accounts.id.prompt();
+    const GOOGLE_CLIENT_ID = '378489832271-7i2ho8hbuo3heeri859cbc0tpkgu1gt3.apps.googleusercontent.com';
+
+    if (localStorage.getItem('qv_loggedIn') === 'true') {
+      window.location.href = 'index.html';
     }
 
-    function handleGoogleCredential(response) {
-      const payload = parseJwt(response.credential);
-      const name = payload.name;
-      const email = payload.email;
-
-      const users = JSON.parse(localStorage.getItem('qv_users') || '[]');
-      if (!users.find(u => u.email === email)) {
-        users.push({ name, email, password: null, googleAuth: true });
-        localStorage.setItem('qv_users', JSON.stringify(users));
+    // React to logins from other tabs
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'qv_loggedIn' && e.newValue === 'true') {
+        window.location.href = 'index.html';
       }
+    });
 
-      sessionStorage.setItem('qv_loggedIn', 'true');
-      sessionStorage.setItem('qv_user', JSON.stringify({ name, email }));
-      showAlert('Google sign-up successful! Redirecting...', 'success');
-      setTimeout(() => window.location.href = 'index.html', 800);
-    }
+    // Listen for message back from the callback popup
+    window.addEventListener('message', function (event) {
+      if (event.origin !== window.location.origin) return;
+      if (event.data && event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+        const { name, email } = event.data;
+        const users = JSON.parse(localStorage.getItem('qv_users') || '[]');
+        if (!users.find(u => u.email === email)) {
+          users.push({ name, email, password: null, googleAuth: true });
+          localStorage.setItem('qv_users', JSON.stringify(users));
+        }
+        localStorage.setItem('qv_loggedIn', 'true');
+        localStorage.setItem('qv_user', JSON.stringify({ name, email }));
+        showAlert('Google sign-up successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = 'index.html', 800);
+      }
+    });
 
-    function parseJwt(token) {
-      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(atob(base64));
+    function triggerGoogleSignup() {
+      // Reverted to explicit root path because of Google Cloud Console whitelist restrictions
+      const redirectUri = encodeURIComponent(window.location.origin + '/google-callback.html');
+      const scope = encodeURIComponent('openid email profile');
+      const url = `https://accounts.google.com/o/oauth2/v2/auth`
+        + `?client_id=${GOOGLE_CLIENT_ID}`
+        + `&redirect_uri=${redirectUri}`
+        + `&response_type=token`
+        + `&scope=${scope}`
+        + `&prompt=select_account`;
+
+      const w = 500, h = 600;
+      const left = (screen.width - w) / 2;
+      const top = (screen.height - h) / 2;
+      window.open(url, 'GoogleSignup', `width=${w},height=${h},left=${left},top=${top}`);
     }
 
     function togglePwd(id, btn) {
@@ -416,7 +431,10 @@
       setTimeout(() => window.location.href = 'login.html', 1000);
     }
 
-    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSignup(); });
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      handleSignup();
+    });
   </script>
 </body>
 

@@ -282,31 +282,32 @@
 
     <div id="alert" class="alert"></div>
 
-    <div class="field">
-      <label for="email">Email address</label>
-      <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
-    </div>
+    <form id="login-form">
 
-    <div class="field">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
-        <label for="password" style="margin-bottom:0">Password</label>
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
       </div>
-      <div class="pwd-wrap">
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
-        <button class="eye-btn" onclick="togglePwd(this)" aria-label="Toggle password">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
-      </div>
-    </div>
 
-    <button class="btn-login" onclick="handleLogin()"><span>Continue</span></button>
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="pwd-wrap">
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+          <button type="button" class="eye-btn" onclick="togglePwd(this)" aria-label="Toggle password">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login"><span>Continue</span></button>
+    </form>
 
     <div class="divider"><span>or</span></div>
 
-    <button class="btn-google" onclick="handleGoogleLogin()">
+    <button type="button" class="btn-google" onclick="handleGoogleLogin()">
       <svg width="20" height="20" viewBox="0 0 24 24">
         <path fill="#4285F4"
           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -326,9 +327,16 @@
   <script>
     const GOOGLE_CLIENT_ID = '378489832271-7i2ho8hbuo3heeri859cbc0tpkgu1gt3.apps.googleusercontent.com';
 
-    if (sessionStorage.getItem('qv_loggedIn') === 'true') {
+    if (localStorage.getItem('qv_loggedIn') === 'true') {
       window.location.href = 'index.html';
     }
+
+    // React to logins from other tabs
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'qv_loggedIn' && e.newValue === 'true') {
+        window.location.href = 'index.html';
+      }
+    });
 
     // Listen for message back from the callback popup
     window.addEventListener('message', function (event) {
@@ -340,14 +348,15 @@
           users.push({ name, email, password: null, googleAuth: true });
           localStorage.setItem('qv_users', JSON.stringify(users));
         }
-        sessionStorage.setItem('qv_loggedIn', 'true');
-        sessionStorage.setItem('qv_user', JSON.stringify({ name, email }));
+        localStorage.setItem('qv_loggedIn', 'true');
+        localStorage.setItem('qv_user', JSON.stringify({ name, email }));
         showAlert('Google login successful! Redirecting...', 'success');
         setTimeout(() => window.location.href = 'index.html', 800);
       }
     });
 
     function handleGoogleLogin() {
+      // Reverted to explicit root path because of Google Cloud Console whitelist restrictions
       const redirectUri = encodeURIComponent(window.location.origin + '/google-callback.html');
       const scope = encodeURIComponent('openid email profile');
       const url = `https://accounts.google.com/o/oauth2/v2/auth`
@@ -396,14 +405,17 @@
         document.getElementById('password').classList.add('input-error');
         return;
       }
-      sessionStorage.setItem('qv_loggedIn', 'true');
-      sessionStorage.setItem('qv_user', JSON.stringify({ name: user.name, email: user.email }));
+      localStorage.setItem('qv_loggedIn', 'true');
+      localStorage.setItem('qv_user', JSON.stringify({ name: user.name, email: user.email }));
       showAlert('Login successful! Redirecting...', 'success');
       setTimeout(() => window.location.href = 'index.html', 800);
     }
 
-    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
-  </script>
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      handleLogin();
+    });
+  </script>ṭṭ
 </body>
 
 </html>
