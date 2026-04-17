@@ -1,5 +1,5 @@
 'use strict';
-let apitoken = 'xSE9StXaZBTbvfxs8ibDGrQwCrJ6HkkwMif0YbSa';
+let apitoken = 'qa_sk_66ffe3024b359ee97192c6202573034e95ad2d88';
 
 const question = document.querySelector('.ques');
 const nextbtn = document.querySelector('.next');

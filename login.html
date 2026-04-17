@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login — QuizzyVerse</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     :root {
       --cream: #F5F0E8;
       --ink: #1A1714;
@@ -16,6 +26,7 @@
       --error: #c0392b;
       --success: #27ae60;
     }
+
     body {
       min-height: 100vh;
       display: flex;
@@ -24,11 +35,13 @@
       font-family: 'DM Sans', sans-serif;
       background: var(--cream);
     }
+
     .form-wrap {
       width: 560px;
       padding: 4rem 3.5rem;
       animation: fadeUp 0.9s ease 0.1s both;
     }
+
     .form-eyebrow {
       font-size: 0.82rem;
       letter-spacing: 0.16em;
@@ -36,6 +49,7 @@
       color: var(--warm-mid);
       margin-bottom: 1rem;
     }
+
     .form-title {
       font-family: 'Playfair Display', serif;
       font-size: 3.75rem;
@@ -44,10 +58,12 @@
       letter-spacing: -0.03em;
       margin-bottom: 3rem;
     }
+
     .field {
       margin-bottom: 1.6rem;
       position: relative;
     }
+
     label {
       display: block;
       font-size: 0.75rem;
@@ -57,7 +73,10 @@
       color: var(--warm-mid);
       margin-bottom: 0.6rem;
     }
-    input[type="email"], input[type="password"], input[type="text"] {
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
       width: 100%;
       padding: 1.05rem 1.2rem;
       border: 1px solid var(--border);
@@ -69,20 +88,24 @@
       transition: border-color 0.2s, box-shadow 0.2s;
       border-radius: 2px;
     }
-    input::placeholder { color: #C8BFB5; }
+
+    input::placeholder {
+      color: #C8BFB5;
+    }
+
     input:focus {
       border-color: var(--ink);
-      box-shadow: 0 0 0 3px rgba(26,23,20,0.06);
+      box-shadow: 0 0 0 3px rgba(26, 23, 20, 0.06);
     }
-    input.input-error { border-color: var(--error); }
-    .field-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.6rem;
+
+    input.input-error {
+      border-color: var(--error);
     }
-    .field-row label { margin-bottom: 0; }
-    .pwd-wrap { position: relative; }
+
+    .pwd-wrap {
+      position: relative;
+    }
+
     .eye-btn {
       position: absolute;
       right: 1.1rem;
@@ -97,7 +120,11 @@
       padding: 0;
       transition: color 0.2s;
     }
-    .eye-btn:hover { color: var(--ink); }
+
+    .eye-btn:hover {
+      color: var(--ink);
+    }
+
     .btn-login {
       width: 100%;
       padding: 1.15rem;
@@ -113,8 +140,8 @@
       border-radius: 2px;
       position: relative;
       overflow: hidden;
-      margin-bottom: 0;
     }
+
     .btn-login::after {
       content: '';
       position: absolute;
@@ -125,8 +152,16 @@
       transition: transform 0.35s ease;
       z-index: 0;
     }
-    .btn-login:hover::after { transform: scaleX(1); }
-    .btn-login span { position: relative; z-index: 1; }
+
+    .btn-login:hover::after {
+      transform: scaleX(1);
+    }
+
+    .btn-login span {
+      position: relative;
+      z-index: 1;
+    }
+
     .alert {
       padding: 0.85rem 1rem;
       border-radius: 2px;
@@ -135,14 +170,72 @@
       display: none;
       letter-spacing: 0.02em;
     }
-    .alert-error { background: #fdf0ef; border: 1px solid #f5c6c2; color: var(--error); display: block; }
-    .alert-success { background: #edfaf3; border: 1px solid #b7efd1; color: var(--success); display: block; }
+
+    .alert-error {
+      background: #fdf0ef;
+      border: 1px solid #f5c6c2;
+      color: var(--error);
+      display: block;
+    }
+
+    .alert-success {
+      background: #edfaf3;
+      border: 1px solid #b7efd1;
+      color: var(--success);
+      display: block;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.75rem 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider span {
+      font-size: 0.72rem;
+      color: var(--warm-mid);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .btn-google {
+      width: 100%;
+      padding: 1.05rem;
+      border: 1px solid var(--border);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-google:hover {
+      border-color: #4285F4;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    }
+
     .signup-line {
       margin-top: 2.25rem;
       text-align: center;
       font-size: 0.88rem;
       color: var(--warm-mid);
     }
+
     .signup-line a {
       color: var(--ink);
       font-weight: 500;
@@ -151,17 +244,37 @@
       padding-bottom: 1px;
       transition: color 0.2s, border-color 0.2s;
     }
-    .signup-line a:hover { color: var(--accent); border-color: var(--accent); }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+
+    .signup-line a:hover {
+      color: var(--accent);
+      border-color: var(--accent);
     }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: 620px) {
-      .form-wrap { width: 100%; padding: 2.5rem 1.5rem; }
-      .form-title { font-size: 2.75rem; }
+      .form-wrap {
+        width: 100%;
+        padding: 2.5rem 1.5rem;
+      }
+
+      .form-title {
+        font-size: 2.75rem;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="form-wrap">
     <p class="form-eyebrow">Welcome back</p>
@@ -175,15 +288,15 @@
     </div>
 
     <div class="field">
-      <div class="field-row">
-        <label for="password">Password</label>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
+        <label for="password" style="margin-bottom:0">Password</label>
       </div>
       <div class="pwd-wrap">
         <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
         <button class="eye-btn" onclick="togglePwd(this)" aria-label="Toggle password">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/>
-            <circle cx="12" cy="12" r="3"/>
+            <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
+            <circle cx="12" cy="12" r="3" />
           </svg>
         </button>
       </div>
@@ -191,13 +304,63 @@
 
     <button class="btn-login" onclick="handleLogin()"><span>Continue</span></button>
 
+    <div class="divider"><span>or</span></div>
+
+    <button class="btn-google" onclick="handleGoogleLogin()">
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path fill="#4285F4"
+          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+        <path fill="#34A853"
+          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+        <path fill="#FBBC05"
+          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+        <path fill="#EA4335"
+          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+      </svg>
+      Continue with Google
+    </button>
+
     <p class="signup-line">No account yet? <a href="signup.html">Create one</a></p>
   </div>
 
   <script>
-    // If already logged in, go straight to quiz
+    const GOOGLE_CLIENT_ID = '378489832271-7i2ho8hbuo3heeri859cbc0tpkgu1gt3.apps.googleusercontent.com';
+
     if (sessionStorage.getItem('qv_loggedIn') === 'true') {
       window.location.href = 'index.html';
+    }
+
+    // Listen for message back from the callback popup
+    window.addEventListener('message', function (event) {
+      if (event.origin !== window.location.origin) return;
+      if (event.data && event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+        const { name, email } = event.data;
+        const users = JSON.parse(localStorage.getItem('qv_users') || '[]');
+        if (!users.find(u => u.email === email)) {
+          users.push({ name, email, password: null, googleAuth: true });
+          localStorage.setItem('qv_users', JSON.stringify(users));
+        }
+        sessionStorage.setItem('qv_loggedIn', 'true');
+        sessionStorage.setItem('qv_user', JSON.stringify({ name, email }));
+        showAlert('Google login successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = 'index.html', 800);
+      }
+    });
+
+    function handleGoogleLogin() {
+      const redirectUri = encodeURIComponent(window.location.origin + '/google-callback.html');
+      const scope = encodeURIComponent('openid email profile');
+      const url = `https://accounts.google.com/o/oauth2/v2/auth`
+        + `?client_id=${GOOGLE_CLIENT_ID}`
+        + `&redirect_uri=${redirectUri}`
+        + `&response_type=token`
+        + `&scope=${scope}`
+        + `&prompt=select_account`;
+
+      const w = 500, h = 600;
+      const left = (screen.width - w) / 2;
+      const top = (screen.height - h) / 2;
+      window.open(url, 'GoogleLogin', `width=${w},height=${h},left=${left},top=${top}`);
     }
 
     function togglePwd(btn) {
@@ -218,37 +381,29 @@
     function handleLogin() {
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-
       document.getElementById('email').classList.remove('input-error');
       document.getElementById('password').classList.remove('input-error');
-
       if (!email || !password) {
         showAlert('Please fill in all fields.', 'error');
         if (!email) document.getElementById('email').classList.add('input-error');
         if (!password) document.getElementById('password').classList.add('input-error');
         return;
       }
-
       const users = JSON.parse(localStorage.getItem('qv_users') || '[]');
       const user = users.find(u => u.email === email && u.password === password);
-
       if (!user) {
         showAlert('Invalid email or password. Please try again.', 'error');
         document.getElementById('password').classList.add('input-error');
         return;
       }
-
       sessionStorage.setItem('qv_loggedIn', 'true');
       sessionStorage.setItem('qv_user', JSON.stringify({ name: user.name, email: user.email }));
-
       showAlert('Login successful! Redirecting...', 'success');
       setTimeout(() => window.location.href = 'index.html', 800);
     }
 
-    // Allow Enter key to submit
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleLogin();
-    });
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
   </script>
 </body>
+
 </html>
