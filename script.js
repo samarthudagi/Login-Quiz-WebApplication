@@ -207,8 +207,14 @@ nextbtn.addEventListener('click', function () {
 });
 
 playAgainButton.addEventListener('click', function () {
-    resetQuiz();
-    displayingData();
+    if (window.allFetchedData && window.allFetchedData.length > 0) {
+        window.allFetchedData.sort(() => 0.5 - Math.random());
+        data = window.allFetchedData.slice(0, parseInt(number));
+        resetQuiz();
+        displayingData();
+    } else {
+        startButton.click();
+    }
 });
 
 function resetQuiz() {
@@ -243,11 +249,16 @@ startButton.addEventListener('click', async function () {
     timeLimit = getSelectedValue('time');
 
     let apiTag = type.toLowerCase();
-    if (apiTag === 'code') apiTag = 'programming';
-    if (apiTag === 'next.js') apiTag = 'nextjs';
+    let fetchQuery = '';
+    
+    // Map topics to exactly what QuizAPI actually supports under the hood
+    if (apiTag === 'code') fetchQuery = `category=Programming`;
+    else if (apiTag === 'django') fetchQuery = `tags=python`; // Graceful fallback
+    else if (apiTag === 'next.js') fetchQuery = `tags=react`; // Graceful fallback
+    else fetchQuery = `tags=${encodeURIComponent(apiTag)}`;
 
     // We fetch a larger pool and omit difficulty from the URL to avoid 0-result errors on small tags
-    curl = `https://quizapi.io/api/v1/questions?api_key=${apitoken}&tags=${encodeURIComponent(apiTag)}&limit=50`;
+    curl = `https://quizapi.io/api/v1/questions?api_key=${apitoken}&${fetchQuery}&limit=50`;
 
     startButton.disabled = true;
     startButton.textContent = "Loading...";
@@ -277,6 +288,9 @@ startButton.addEventListener('click', async function () {
         if (filteredData.length === 0) {
             filteredData = apiData;
         }
+
+        // Save pool of questions to use for instant "Play Again" randomization
+        window.allFetchedData = [...filteredData];
 
         // Randomly shuffle the questions to ensure varied quizzes
         filteredData.sort(() => 0.5 - Math.random());
