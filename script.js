@@ -281,11 +281,18 @@ startButton.addEventListener('click', async function () {
             return;
         }
 
+        if (apiData.length < parseInt(number)) {
+            startButton.disabled = false;
+            startButton.textContent = "Start Quiz";
+            alert(`Sorry, the API currently only has ${apiData.length} total questions available for ${type}. Please select a smaller number of questions!`);
+            return;
+        }
+
         // Try to filter by intended difficulty locally
         let filteredData = apiData.filter(q => q.difficulty && q.difficulty.toLowerCase() === diff.toLowerCase());
         
-        // Fallback: If QuizAPI lacks questions of that specific difficulty, use whatever is available
-        if (filteredData.length === 0) {
+        // Fallback: If filtering by difficulty causes the pool to drop below the requested number, use all available difficulties
+        if (filteredData.length < parseInt(number)) {
             filteredData = apiData;
         }
 
